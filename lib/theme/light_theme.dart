@@ -306,7 +306,12 @@ class LightThemeData {
 
   ThemeData get theme => _theme;
   TextTheme get textTheme => _theme.textTheme;
-  InputDecorationTheme get inputDecorationTheme => _theme.inputDecorationTheme;
+  InputDecorationTheme get inputDecorationTheme => InputDecorationTheme(
+    filled: _theme.inputDecorationTheme.filled,
+    fillColor: _theme.inputDecorationTheme.fillColor,
+    border: _theme.inputDecorationTheme.border,
+    contentPadding: _theme.inputDecorationTheme.contentPadding,
+  );
 
   static const ColorScheme _colorScheme = ColorScheme(
     primary: primary,

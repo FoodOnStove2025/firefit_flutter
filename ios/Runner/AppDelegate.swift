@@ -21,8 +21,8 @@ import UIKit
     let flutterViewController = FlutterViewController(engine: flutterEngine, nibName: nil, bundle: nil)
     
     // Set the root view controller
-    self.window.rootViewController = flutterViewController
-    self.window.makeKeyAndVisible()
+    self.window?.rootViewController = flutterViewController
+    self.window?.makeKeyAndVisible()
     
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }

@@ -24,7 +24,7 @@ android {
         applicationId = "com.example.moments_in_love"
         // You can update the following values to match your application needs.
         // For more information see: https://flutter.dev/to/review-gradle-config.
-        minSdk = 21  // Setting explicit minSdk for connectivity_plus
+        minSdkVersion(24)  // Required for integration_test plugin
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
