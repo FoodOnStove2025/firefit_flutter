@@ -4708,9 +4708,9 @@ type Users implements Node {
   # Globally Unique Record Identifier
   nodeId: ID!
   id: UUID!
-  did: String!
-  handle: String!
-  pdsUrl: String!
+  did: String
+  handle: String
+  pdsUrl: String
   email: String!
   lastName: String!
   firstName: String!

@@ -540,9 +540,9 @@ class Fragment$User {
     required this.firstName,
     required this.lastName,
     this.metadata,
-    required this.did,
-    required this.handle,
-    required this.pdsUrl,
+    this.did,
+    this.handle,
+    this.pdsUrl,
     required this.createdAt,
     this.userRolesCollection,
     this.primaryStationId,
@@ -574,9 +574,9 @@ class Fragment$User {
       firstName: (l$firstName as String),
       lastName: (l$lastName as String),
       metadata: l$metadata == null ? null : jsonFieldFromJson(l$metadata),
-      did: (l$did as String),
-      handle: (l$handle as String),
-      pdsUrl: (l$pdsUrl as String),
+      did: (l$did as String?),
+      handle: (l$handle as String?),
+      pdsUrl: (l$pdsUrl as String?),
       createdAt: DateTime.parse((l$createdAt as String)),
       userRolesCollection: l$userRolesCollection == null
           ? null
@@ -609,11 +609,11 @@ class Fragment$User {
 
   final Map<String, dynamic>? metadata;
 
-  final String did;
+  final String? did;
 
-  final String handle;
+  final String? handle;
 
-  final String pdsUrl;
+  final String? pdsUrl;
 
   final DateTime createdAt;
 
@@ -874,13 +874,9 @@ class _CopyWithImpl$Fragment$User<TRes>
         metadata: metadata == _undefined
             ? _instance.metadata
             : (metadata as Map<String, dynamic>?),
-        did: did == _undefined || did == null ? _instance.did : (did as String),
-        handle: handle == _undefined || handle == null
-            ? _instance.handle
-            : (handle as String),
-        pdsUrl: pdsUrl == _undefined || pdsUrl == null
-            ? _instance.pdsUrl
-            : (pdsUrl as String),
+        did: did == _undefined ? _instance.did : (did as String?),
+        handle: handle == _undefined ? _instance.handle : (handle as String?),
+        pdsUrl: pdsUrl == _undefined ? _instance.pdsUrl : (pdsUrl as String?),
         createdAt: createdAt == _undefined || createdAt == null
             ? _instance.createdAt
             : (createdAt as DateTime),

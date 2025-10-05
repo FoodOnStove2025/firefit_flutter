@@ -2,6 +2,9 @@ import 'package:core/commerce/domain/models/product.dart';
 import 'package:firefit/config/router_notifier.dart';
 import 'package:firefit/features/auth/presentation/screens/login_screen.dart';
 import 'package:firefit/features/auth/presentation/screens/registration_screen.dart';
+import 'package:firefit/features/auth/presentation/screens/supabase_login_screen.dart';
+import 'package:firefit/features/auth/presentation/screens/supabase_registration_screen_simple.dart';
+import 'package:firefit/features/auth/providers/authentication_service_provider.dart';
 import 'package:firefit/features/commerce/presentation/screens/orders_screen.dart';
 import 'package:firefit/features/commerce/presentation/screens/payment_success_screen.dart';
 import 'package:firefit/features/common/presentation/screens/error_screen.dart';
@@ -40,7 +43,9 @@ final routerProvider = Provider<GoRouter>((ref) {
       if (!isAuthenticated && !isAuthRoute) return '/login';
       if (isAuthenticated &&
           isAuthRoute &&
-          state.matchedLocation != '/reset-password') return '/';
+          state.matchedLocation != '/reset-password') {
+        return '/';
+      }
       return null;
     },
     routes: [
@@ -119,7 +124,12 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
         ],
       ),
-      GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
+      GoRoute(
+        path: '/login',
+        builder: (context, state) => useSupabaseAuth
+            ? const SupabaseLoginScreen()
+            : const LoginScreen(),
+      ),
       GoRoute(
         path: '/reset-password',
         builder: (context, state) => const RequestPasswordResetScreen(),
@@ -131,7 +141,9 @@ final routerProvider = Provider<GoRouter>((ref) {
           }),
       GoRoute(
         path: '/register',
-        builder: (context, state) => const RegistrationScreen(),
+        builder: (context, state) => useSupabaseAuth
+            ? const SimpleSupabaseRegistrationScreen()
+            : const RegistrationScreen(),
       ),
     ],
     errorBuilder: (context, state) => ErrorScreen(

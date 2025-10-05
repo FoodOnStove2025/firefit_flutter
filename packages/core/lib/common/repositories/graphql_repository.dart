@@ -2,6 +2,7 @@
 
 import 'package:core/config/env.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 import 'package:talker_flutter/talker_flutter.dart';
 
 class GraphQLRepository {
@@ -13,7 +14,18 @@ class GraphQLRepository {
     this.hiveStore,
   }) {
     final AuthLink authLink = AuthLink(
-      getToken: () => env.supabaseKey,
+      getToken: () async {
+        // Use the current user's session token for RLS policies to work
+        final session = sb.Supabase.instance.client.auth.currentSession;
+        if (session != null && session.accessToken.isNotEmpty) {
+          print('GraphQL using user session token for authentication');
+          return 'Bearer ${session.accessToken}';
+        } else {
+          // Fallback to API key for unauthenticated requests
+          print('GraphQL using API key for authentication (no user session)');
+          return env.supabaseKey;
+        }
+      },
     );
 
     HttpLink httpLink = HttpLink('${env.supabaseBaseUrl}/graphql/v1',

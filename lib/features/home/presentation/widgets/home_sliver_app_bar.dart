@@ -269,10 +269,10 @@ class HomeSliverAppBar extends HookConsumerWidget {
                     padding: EdgeInsets.only(right: 8),
                     child: GestureDetector(
                       onTap: () => context.push('/profile'),
-                      child: user.profile.avatar != null
-                          ? ShadAvatar(user.profile.avatar!)
+                      child: user.profile?.avatar != null
+                          ? ShadAvatar(user.profile?.avatar ?? '')
                           : InitialsAvatar(
-                              name: user.profile.displayName!,
+                              name: user.profile?.displayName ?? user.displayName,
                             ),
                     ),
                   ),

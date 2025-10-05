@@ -93,6 +93,11 @@ class UserRepository extends UserRepositoryInterface {
   Future<Either<Failure, User>> updateUser(
       {required String id, required Input$UsersUpdateInput input}) async {
     try {
+      print('=== UpdateUser Debug Info ===');
+      print('User ID: $id');
+      print('Update Input: $input');
+      print('Input primaryStationId: ${input.primaryStationId}');
+      
       final response =
           await graphqlClient.mutate$UpdateUser(Options$Mutation$UpdateUser(
         variables: Variables$Mutation$UpdateUser(
@@ -101,16 +106,45 @@ class UserRepository extends UserRepositoryInterface {
         ),
       ));
 
+      print('GraphQL Response received');
+      print('Has Exception: ${response.hasException}');
+      print('Response Data: ${response.data}');
+      print('Parsed Data: ${response.parsedData}');
+
       if (response.hasException) {
-        debugPrint('${response.exception}');
+        debugPrint('UpdateUser GraphQL Exception: ${response.exception}');
+        print('UpdateUser failed - ID: $id, Input: $input');
+        print('Exception details: ${response.exception.toString()}');
         return Left(Failure.unprocessableEntity(
             message: response.exception.toString()));
       }
 
-      if (response.parsedData != null) {
-        return Right(response.parsedData!.updateUsersCollection.records.first);
+      if (response.parsedData?.updateUsersCollection != null) {
+        print('Update response records: ${response.parsedData!.updateUsersCollection!.records}');
+        print('Affected count: ${response.parsedData!.updateUsersCollection!.affectedCount}');
       }
-      return const Left(Failure.empty());
+
+      print('UpdateUser mutation completed successfully');
+      
+      // After update, fetch the user to get the updated data
+      // The mutation might not return records, so we fetch separately
+      final userResult = await queryUsers(
+        filter: Input$UsersFilter(
+          id: Input$UUIDFilter(
+            eq: id,
+          ),
+        ),
+      );
+      
+      return userResult.fold(
+        (l) => Left(Failure.unprocessableEntity(message: 'Failed to fetch updated user')),
+        (users) {
+          if (users.isNotEmpty) {
+            return Right(users.first);
+          }
+          return const Left(Failure.empty());
+        },
+      );
     } catch (e) {
       debugPrint('$e');
       return Left(Failure.unprocessableEntity(message: e.toString()));

@@ -95,12 +95,12 @@ class ProfileScreen extends HookConsumerWidget {
                                         theme.colorScheme.primary.b.round(),
                                         0.1
                                       ),
-                                  backgroundImage: user.profile.avatar != null
-                                      ? NetworkImage(user.profile.avatar!)
+                                  backgroundImage: user.profile?.avatar != null
+                                      ? NetworkImage(user.profile!.avatar!)
                                       : null,
-                                  child: user.profile.avatar == null
+                                  child: user.profile?.avatar == null
                                       ? Text(
-                                          user.profile.displayName?[0].toUpperCase() ?? '',
+                                          user.profile?.displayName?[0]?.toUpperCase() ?? user.displayName[0].toUpperCase(),
                                           style: theme.textTheme.headlineMedium?.copyWith(
                                             color: theme.colorScheme.primary,
                                           ),
@@ -124,7 +124,7 @@ class ProfileScreen extends HookConsumerWidget {
                           child: Column(
                             children: [
                               Text(
-                                user.profile.displayName ?? 'No Name',
+                                user.profile?.displayName ?? user.displayName,
                                 style: theme.textTheme.headlineMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
                                   color: theme.colorScheme.onSurface,
@@ -132,7 +132,7 @@ class ProfileScreen extends HookConsumerWidget {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                '@${user.profile.handle}',
+                                '@${user.profile?.handle ?? user.email.split('@')[0]}',
                                 style: theme.textTheme.titleMedium?.copyWith(
                                   color: Color.fromRGBO(
                                     theme.colorScheme.onSurface.r.round(),
@@ -142,10 +142,10 @@ class ProfileScreen extends HookConsumerWidget {
                                   ),
                                 ),
                               ),
-                              if (user.profile.description != null) ...[
+                              if (user.profile?.description != null) ...[
                                 const SizedBox(height: 12),
                                 Text(
-                                  user.profile.description!,
+                                  user.profile?.description ?? '',
                                   style: theme.textTheme.bodyLarge?.copyWith(
                                     color: theme.colorScheme.onSurface,
                                   ),

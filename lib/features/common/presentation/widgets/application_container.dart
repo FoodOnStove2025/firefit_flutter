@@ -68,7 +68,18 @@ class _ApplicationContainerState extends ConsumerState<ApplicationContainer> {
 
     return homeStateValue.when(
       data: (homeState) {
-        final user = homeState.user!.user;
+        final user = homeState.user?.user;
+        
+        // If user is null, redirect to login
+        if (user == null) {
+          return ErrorScreen(
+            errorMessage: 'User not found. Please log in again.',
+            onRetry: () {
+              // Redirect to login
+            },
+          );
+        }
+        
         final asyncProductCart = ref.watch(productCartProvider);
 
         return asyncProductCart.when(
@@ -104,7 +115,7 @@ class _ApplicationContainerState extends ConsumerState<ApplicationContainer> {
                         ),
                       ),
                       title: Text(
-                        homeState.user!.user.firstName,
+                        homeState.user?.user.firstName ?? 'User',
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
                               fontFamily: 'Geist Mono',
                               fontWeight: FontWeight.bold,
@@ -118,7 +129,7 @@ class _ApplicationContainerState extends ConsumerState<ApplicationContainer> {
                                   _showCart(
                                     context,
                                     cartModel.shoppingCartItems,
-                                    user,
+                                    user!,
                                   );
                                 },
                                 count: cartItemCount,
@@ -162,19 +173,19 @@ class _ApplicationContainerState extends ConsumerState<ApplicationContainer> {
                                         .toInt(),
                                     0.1),
                                 backgroundImage:
-                                    homeState.user!.profile.avatar != null
+                                    homeState.user?.profile?.avatar != null
                                         ? CachedNetworkImageProvider(
-                                            homeState.user!.profile.avatar!,
+                                            homeState.user?.profile?.avatar ?? '',
                                             maxWidth:
                                                 150, // Constrain max size for memory efficiency
                                             maxHeight: 150,
                                             cacheKey:
-                                                'avatar_${homeState.user!.user.id}',
+                                                'avatar_${user.id}',
                                           )
                                         : null,
-                                child: homeState.user!.profile.avatar == null
+                                child: homeState.user?.profile?.avatar == null
                                     ? Text(
-                                        homeState.user!.profile.displayName?[0]
+                                        homeState.user?.profile?.displayName?[0]
                                                 .toUpperCase() ??
                                             '',
                                         style: Theme.of(context)

@@ -121,16 +121,31 @@ class UserNotifier extends AsyncNotifier<UserState> {
           return left(l);
         },
         (r) {
-          state = AsyncValue.data(
-            UserState(
-              user: r,
-              isLoading: false,
-              isLoggedIn: true,
-              error: null,
-              station: r.user.primaryStation,
-            ),
-          );
-          return right(r);
+          try {
+            state = AsyncValue.data(
+              UserState(
+                user: r,
+                isLoading: false,
+                isLoggedIn: true,
+                error: null,
+                station: r.user.primaryStation,
+              ),
+            );
+            return right(r);
+          } catch (e) {
+            print('Error accessing user.primaryStation: $e');
+            // Create state without station data to avoid null casting errors
+            state = AsyncValue.data(
+              UserState(
+                user: r,
+                isLoading: false,
+                isLoggedIn: true,
+                error: null,
+                station: null, // Set to null to avoid casting errors
+              ),
+            );
+            return right(r);
+          }
         },
       );
     } catch (err, stackTrace) {
@@ -158,6 +173,9 @@ class UserNotifier extends AsyncNotifier<UserState> {
           );
         }
 
+        print('Register method - previousState.station: ${previousState.station}');
+        print('Register method - station ID: ${previousState.station?.id}');
+        
         final authResult = await authenticationService.register(
             email: email,
             password: password,

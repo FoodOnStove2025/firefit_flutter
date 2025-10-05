@@ -9,7 +9,6 @@ import 'package:core/core.dart';
 import 'package:firefit/config/providers.dart';
 import 'package:firefit/env/env.dart';
 import 'package:firefit/features/commerce/domain/database/database.dart';
-import 'package:firefit/features/commerce/presentation/providers/delivery_location_provider.dart';
 import 'package:firefit/features/home/presentation/providers/home_state.dart';
 import 'package:fpdart/fpdart.dart' as fp;
 import 'package:http/http.dart' as http;
