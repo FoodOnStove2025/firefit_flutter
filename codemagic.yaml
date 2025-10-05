@@ -1,0 +1,176 @@
+workflows:
+  android-debug:
+    name: Android Debug Build
+    max_build_duration: 60
+    instance_type: mac_mini_m1
+    environment:
+      android_signing:
+        - keystore_reference
+      groups:
+        - google_play
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+    scripts:
+      - name: Get Flutter packages
+        script: |
+          flutter pub get
+      - name: Generate code for core package
+        script: |
+          cd packages/core
+          flutter pub get
+          flutter pub run build_runner build --delete-conflicting-outputs
+          cd ../..
+      - name: Generate code for main app
+        script: |
+          flutter pub run build_runner build --delete-conflicting-outputs
+      - name: Build Android debug APK
+        script: |
+          flutter build apk --debug
+    artifacts:
+      - build/**/outputs/**/*.apk
+      - build/**/outputs/**/mapping.txt
+      - flutter_drive.log
+    publishing:
+      email:
+        recipients:
+          - your-email@example.com
+        notify:
+          success: true
+          failure: true
+
+  android-release:
+    name: Android Release Build
+    max_build_duration: 60
+    instance_type: mac_mini_m1
+    environment:
+      android_signing:
+        - keystore_reference
+      groups:
+        - google_play
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+    scripts:
+      - name: Get Flutter packages
+        script: |
+          flutter pub get
+      - name: Generate code for core package
+        script: |
+          cd packages/core
+          flutter pub get
+          flutter pub run build_runner build --delete-conflicting-outputs
+          cd ../..
+      - name: Generate code for main app
+        script: |
+          flutter pub run build_runner build --delete-conflicting-outputs
+      - name: Build Android release bundle
+        script: |
+          flutter build appbundle --release
+    artifacts:
+      - build/**/outputs/**/*.aab
+      - build/**/outputs/**/mapping.txt
+      - flutter_drive.log
+    publishing:
+      email:
+        recipients:
+          - your-email@example.com
+        notify:
+          success: true
+          failure: true
+      google_play:
+        credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
+        track: internal
+
+  ios-debug:
+    name: iOS Debug Build
+    max_build_duration: 60
+    instance_type: mac_mini_m1
+    environment:
+      ios_signing:
+        distribution_type: development
+        bundle_identifier: com.yourcompany.firefit
+      groups:
+        - app_store_connect
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+    scripts:
+      - name: Get Flutter packages
+        script: |
+          flutter pub get
+      - name: Generate code for core package
+        script: |
+          cd packages/core
+          flutter pub get
+          flutter pub run build_runner build --delete-conflicting-outputs
+          cd ../..
+      - name: Generate code for main app
+        script: |
+          flutter pub run build_runner build --delete-conflicting-outputs
+      - name: Install CocoaPods dependencies
+        script: |
+          cd ios && pod install
+      - name: Build iOS debug app
+        script: |
+          flutter build ios --debug --no-codesign
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - flutter_drive.log
+    publishing:
+      email:
+        recipients:
+          - your-email@example.com
+        notify:
+          success: true
+          failure: true
+
+  ios-release:
+    name: iOS Release Build
+    max_build_duration: 60
+    instance_type: mac_mini_m1
+    environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.yourcompany.firefit
+      groups:
+        - app_store_connect
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+    scripts:
+      - name: Get Flutter packages
+        script: |
+          flutter pub get
+      - name: Generate code for core package
+        script: |
+          cd packages/core
+          flutter pub get
+          flutter pub run build_runner build --delete-conflicting-outputs
+          cd ../..
+      - name: Generate code for main app
+        script: |
+          flutter pub run build_runner build --delete-conflicting-outputs
+      - name: Install CocoaPods dependencies
+        script: |
+          cd ios && pod install
+      - name: Build iOS release IPA
+        script: |
+          flutter build ipa --release --export-options-plist=/Users/builder/export_options.plist
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - flutter_drive.log
+    publishing:
+      email:
+        recipients:
+          - your-email@example.com
+        notify:
+          success: true
+          failure: true
+      app_store_connect:
+        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
+        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
+        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
+        submit_to_testflight: true
